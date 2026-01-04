@@ -76,7 +76,7 @@ Make sure LaTeX is installed (e.g., TeX Live).
 ## Authors
 
 - **Enrique Heller**
-- **Other collaborator** (if applicable, based on the report: Heller, Zaton)
+- **Martin Zaton**
 
 ## References
 
