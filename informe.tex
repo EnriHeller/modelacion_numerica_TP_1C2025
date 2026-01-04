@@ -14,7 +14,6 @@
 \usepackage{array}
 \usepackage{amsmath}
 
-
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{T.P - Heller, Zaton}
@@ -38,7 +37,7 @@
     \centering
     \vfill
     {\Huge \bfseries 
-Análisis numérico de un sistema vibratorio lineal y no lineal \par}
+    Análisis numérico de un sistema vibratorio lineal y no lineal \par}
     \vspace{1cm}
     {\Large [CB051] Modelación Numérica - Curso 02 Tarela \par}
     \vspace{0.05cm}
@@ -78,7 +77,7 @@ El presente trabajo tiene como objetivo analizar la aplicabilidad de métodos nu
 
 Se parte de entender al estudio de sistemas oscilatorios como fundamental en diversas ramas de la ingeniería, tal que permite comprender la respuesta de estructuras y componentes mecánicos ante perturbaciones. Se interpreta al modelo \textbf{masa-resorte-amortiguador} como una base para el análisis de estos fenómenos, permitiendo describir el movimiento oscilatorio de un cuerpo sometido a fuerzas restauradoras y disipativas. 
 
-A continuación, se abordará la resolución analítica y numérica del sistema lineal, haciendo especial énfasis en la comparación entre el \textbf{Metodo de Euler Explícito} y el de \textbf{Runge-Kutta de orden 2}, para distintos coeficientes de amortiguamiento relativo. Luego se dará lugar a la incorporación de la no linealidad y se propondrá un analisis a partir del \textit{Oscilador de Duffing}.
+A continuación, se abordará la resolución analítica y numérica del sistema lineal, haciendo especial énfasis en la comparación entre el \textbf{Método de Euler Explícito} y el de \textbf{Runge-Kutta de orden 2}, para distintos coeficientes de amortiguamiento relativo. Luego se dará lugar a la incorporación de la no linealidad y se propondrá un análisis a partir del \textit{Oscilador de Duffing}.
 
 \section{Análisis del sistema lineal (modelo base)}
 
@@ -96,7 +95,6 @@ $x(t)$: & Desplazamiento de la masa \\
 $m$: & Masa del cuerpo \\
 $c$: & Coeficiente de amortiguamiento \\
 $k$: & Constante elástica del resorte \\
-%$\alpha$: & Coeficiente de rigidez no lineal (Duffing) \\
 $t$: & Tiempo \\
 \end{tabular}
 \end{table}
@@ -107,7 +105,7 @@ A partir de dichas magnitudes, se define al coeficiente de amortiguamiento relat
 \zeta = \frac{c}{2\sqrt{km}}
 \]
 
-Dicho coeficiente, nos caracteriza a nuestro sistema de la siguiente manera:
+Dicho coeficiente nos caracteriza a nuestro sistema de la siguiente manera:
 \begin{table}[H]
 \centering
 \begin{tabular}{c c l}
@@ -117,17 +115,16 @@ $\zeta > 1$ & $\Rightarrow$ & Sistema sobreamortiguado \\
 \end{tabular}
 \end{table}
 
-
-Esta característica de amortiguamiento será uno de los criterios mediante los cuales se evaluarán los métodos númericos presentados a continuación.
+Esta característica de amortiguamiento será uno de los criterios mediante los cuales se evaluarán los métodos numéricos presentados a continuación.
 
 \subsection{Método de Euler Explícito}
 
-Para el desarrollo de este método, se parte de reescribir la EDO de orden 2 presentada, como un sistema de dos ecuaciones de primer orden. Para ello, se procede a definir las siguientes variables de estado $u(t)$ y $v(t)$:
+Para el desarrollo de este método, se parte de reescribir la EDO de orden 2 presentada como un sistema de dos ecuaciones de primer orden. Para ello, se procede a definir las siguientes variables de estado $u(t)$ y $v(t)$:
 
 \[
 \begin{array}{rcl}
 u(t) &=& x(t) \\
-v(t) &=& {x'}(t)
+v(t) &=& x'(t)
 \end{array}
 \]
 
@@ -135,98 +132,84 @@ A partir de este cambio de variables y la EDO de orden 2 definida originalmente,
 
 \[
 \begin{cases}
-u'(t) = v(t) \\
-v'(t) = \dfrac{-c\,v(t) + k\,u(t)}{m}
+u'(t) = v(t), \\
+v'(t) = \dfrac{-c\,v(t) - k\,u(t)}{m}.
 \end{cases}
 \]
 
-La aplicación del método de Euler Explicito ímplica un proceso de discretización, tanto de la variable independiente \textit{t}, como las ecuaciones diferenciales ordinarias. 
-
-Para \textit{t}, que es variable continua, la reescribimos como una serie de $n$ puntos que se encuentran a paso $h$ (no necesariamente constante pero que se define como tal por simplicidad de calculo)  esto significa que:
+La aplicación del método de Euler Explícito implica un proceso de discretización, tanto de la variable independiente $t$, como de las ecuaciones diferenciales ordinarias. Para $t$, que es variable continua, la reescribimos como una serie de $n$ puntos que se encuentran a paso $h$, lo que significa que:
 
 \[
-t = n . h
+t_n = n\,h.
 \]
 
-Para las EDOs de primer orden, se discretiza cada ecuación por separado, siendo a $u^n$  y $v^n$ las aproximaciones númericas de las funciones fuente para el instante $t_n$.
+Para las EDOs de primer orden, se discretiza cada ecuación por separado, siendo $u^n$ y $v^n$ las aproximaciones numéricas de las funciones en el instante $t_n$.
 
-Para la primera ecuación, $u'(t) = v(t)$: Discretizamos la derivada $u'(t)$ en $t_n$ como:
+Para la primera ecuación, $u'(t) = v(t)$, discretizamos la derivada $u'(t)$ en $t_n$ como:
 \[
-u'(t) \approx \dfrac{u^{n+1} - u^n}{h}
+u'(t_n) \approx \frac{u^{n+1} - u^n}{h}.
 \]
-
-Igualando esto a la aproximación de la función fuente y despejando $u^{n+1}$ se obtiene la fórmula de avance para esta ecuación:
-
+Igualando esto a $v^n$ y despejando $u^{n+1}$ se obtiene la fórmula de avance:
 \[
-u^{n+1} = u^n + h \cdot v^n
+u^{n+1} = u^n + h \cdot v^n.
 \]
 
-Haciendo lo propio para la segunda ecuación, se tiene que:
-
+Para la segunda ecuación, $v'(t) = \dfrac{-c\,v(t) - k\,u(t)}{m}$, discretizamos la derivada $v'(t)$ en $t_n$ como:
 \[
-v'(t) \approx \dfrac{v^{n+1} - v^n}{h} 
+v'(t_n) \approx \frac{v^{n+1} - v^n}{h},
 \]
-
+por lo que
 \[
-v^{n+1} = v^n + h \cdot \left(\dfrac{-c.v^n + k.u^n}{m}\right)
+v^{n+1} = v^n + h \cdot \left(\frac{-c\,v^n - k\,u^n}{m}\right).
 \]
 
-Resultando así en el siguiente sistema de avance que nos permite realizar una aproximación a la solución de la EDO de segundo orden original:
-
+Resultando así en el siguiente sistema de avance:
 \[
 \begin{cases}
-u^{n+1} = u^n + h \cdot v^n) \\
-v^{n+1} = v^n + h \cdot \left(\dfrac{-c.v^n + k.u^n}{m}\right)
+u^{n+1} = u^n + h\,v^n, \\
+v^{n+1} = v^n + h \cdot \left(\dfrac{-c\,v^n - k\,u^n}{m}\right).
 \end{cases}
 \]
 
-A partir de este sistema y la definición de las condiciones iniciales y constantes que nos definen los casos particulares a analizar, se define el algoritmo que permite realizar las aproximaciones pertinentes a este método que se retomará posteriormente.
+A partir de este sistema y la definición de las condiciones iniciales y constantes que nos definen los casos particulares a analizar, se desarrolla el algoritmo que implementa este método.
 
 \subsubsection{Análisis de precisión y estabilidad}
 
-    Respecto a la precisión, se puede demostrar que el error de truncamiento en este método es de orden $\mathcal{O}(h)$. Esto hace que el método de Euler Explícito se clasifique como un método de orden 1, lo que implica que, al reducir el paso de discretización $h$ a la mitad, se espera que el error de truncamiento (y el error global, bajo ciertas condiciones) también se reduzca aproximadamente a la mitad. Lo propio se estudiará si ocurre empíricamente.
+Respecto a la precisión, se puede demostrar que el error de truncamiento en este método es de orden $\mathcal{O}(h)$. Esto hace que el método de Euler Explícito se clasifique como un método de orden 1, lo que implica que, al reducir el paso de discretización $h$ a la mitad, se espera que el error de truncamiento (y el error global, bajo ciertas condiciones) también se reduzca aproximadamente a la mitad.
 
-    Es esperable también en este método que haya \textbf{consistencia}, es decir, que cuando el paso \textit{h} tiende a 0, el error de truncamiento (que es el principal) también. Otro factor que resultará interesante de analizar empíricamente.
+Se espera también que este método sea \textbf{consistente}, es decir, que cuando $h \to 0$, el error de truncamiento tienda a cero.
 
-    Para el análisis de estabilidad del método, se procederá a utilizar el método de perturbaciones o \textit{método de Von Neumann}. Para ello, se introducirán pequeñas perturbaciones \(\delta u_n,\, \delta v_n\) en las variables para un instante $t_n$ y se analiza cómo estas perturbaciones se transforman en el instante siguiente $t_{n+1}$:
-    
-    \begin{align*}
-        u_{n+1} + \delta u_{n+1} &= u_n + \delta u_n + h (v_n + \delta v_n), \\
-        v_{n+1} + \delta v_{n+1} &= v_n + \delta v_n + h (-5 (v_n + \delta v_n) - 100 (u_n + \delta u_n)).
-    \end{align*}
+Para el análisis de estabilidad, se utiliza el método de perturbaciones (método de Von Neumann) directamente para el caso general. Se introducen pequeñas perturbaciones $\delta u_n$, $\delta v_n$ en las variables para un instante $t_n$ y se analiza cómo estas perturbaciones se transforman en el instante siguiente $t_{n+1}$:
 
-    Esto lo podemos ver como un sistema de ecuaciones que relaciona las perturbaciones en el paso $n+1$ con las perturbaciones en el paso $n$, restando las ecuaciones originales:
+\begin{align*}
+u_{n+1} + \delta u_{n+1} &= u_n + \delta u_n + h\,\bigl(v_n + \delta v_n\bigr), \\
+v_{n+1} + \delta v_{n+1} &= v_n + \delta v_n + h\,\left(-\frac{c}{m}\bigl(v_n + \delta v_n\bigr) - \frac{k}{m}\bigl(u_n + \delta u_n\bigr)\right).
+\end{align*}
 
-    \begin{align*}
-        \delta u_{n+1} &= \delta u_n + h \cdot \delta v_n, \\
-        \delta v_{n+1} & = -100\,h\,\delta u_n + (1 - 5h)\,\delta v_n
-    \end{align*}
+Que si se restan las ecuaciones originales, se obtiene:
 
-    De dicho sistema es posible definir la \textbf{matriz de amplificación} que describe cómo las perturbaciones se amplifican o decaen de un paso al siguiente:
+\begin{align*}
+\delta u_{n+1} &= \delta u_n + h\,\delta v_n \\
+\delta v_{n+1} &= -\frac{h k}{m}\,\delta u_n + \left(1 - \frac{h c}{m}\right)\,\delta v_n
+\end{align*}
 
-    \[
-    \begin{bmatrix}
-    1 & h \\
-    -100h & 1 - 5h
-    \end{bmatrix}
-    \]
+De este sistema se define la \textbf{matriz de amplificación} que describe cómo las perturbaciones se amplifican o se decaen de un paso al siguiente:
 
-    Para que el esquema numérico sea estable, las perturbaciones no deben crecer. Esto se traduce en la condición de que el radio espectral de la matriz de amplificación debe ser menor o igual a 1. Para este caso (haciéndonos valer de la herramienta \textit{WolframAlpha}, los autovalores resultan en:
+\[
+\begin{bmatrix}
+1 & h \\
+-\frac{h k}{m} & 1 - \frac{h c}{m}
+\end{bmatrix}
+\]
 
-    \[
-        \lambda_1 = \frac{2 - 5h - 5i\sqrt{15}h}{2}, \quad \lambda_2 = \frac{2 - 5h + 5i\sqrt{15}h}{2}
-    \]
+Para que el esquema numérico sea estable, las perturbaciones no deberían crecer. Esto se traduce en la \textbf{condición de que el radio espectral de la matriz de amplificación sea menor o igual a 1}. Mediante la herramienta \textit{WolframAlpha} calculamos los autovalores de la matriz y obtenemos el siguiente resultado:
 
-    El hecho de que los autovalores sean complejos conjugados indica que la solución numérica corresponde a un comportamiento oscilatorio, lo cual resulta coherente para nuestro sistema. 
+\[
+\lambda_{1,2} = \frac{2 - \frac{h c}{m} \pm h \sqrt{\frac{c^2}{m^2} - 4 \frac{k}{m}}}{2}
+\]
 
-    Para que el sistema resulte estable (el radio espectral de la matriz sea menor o igual a 1), las cuentas correspondientes (también mediante \textit{WolframAlpha}) indican la siguiente condición:
-    
-    \[
-    0 \leq h \leq \frac{1}{20} \approx 0.05
-    \]
-    
-    Lo cual se verificará empíricamente. 
-
+Esto indica que el análisis de estabilidad y la cota para $h$ dependerán de los valores de $m$, $c$ y $k$, por lo que la estructura general anterior permite estudiar cada caso particular estudiado más adelante, bajo el método de Euler Explicito.  
+Cabe destacar que el hecho de que los autovalores sean complejos conjugados indica que la solución numérica presenta un comportamiento oscilatorio, lo que resulta coherente con el sistema físico.
 
 \subsection{Método de Runge-Kutta de orden 2}
 
@@ -239,192 +222,881 @@ v'(t) = \dfrac{-c\,v(t) - k\,u(t)}{m}
 \end{cases}
 \]
 
-El método de Runge-Kutta de orden 2 (RK2) permite obtener una mejor aproximación que el método de Euler, ya que utiliza información adicional del sistema en cada paso. Al igual que el método de Euler Explícito, implica el mismo proceso de discretización, del cual nos podemos valer.
+El método de Runge-Kutta de orden 2 (RK2) permite obtener una mejor aproximación que el método de Euler, ya que utiliza información adicional del sistema en cada paso.
 
 El esquema predictor-corrector para este sistema es el siguiente:
 
 \begin{itemize}
     \item \textbf{Paso predictor:}
 
-    Se realiza una primera estimación de los valores en el instante $t^{n+1}$ utilizando las derivadas (evaluadas en las funciones fuente) en el instante actual $t^n$, de manera similar a Euler explícito:
-     
+    Se realiza una primera estimación de los valores en el instante $t_{n+1}$ a partir de información de la pendiente en $t_n$:
+
     \begin{align*}
-        u^*_{n+1} &= u_n + h \cdot v_n \\
-        v^*_{n+1} &= v_n + h \cdot \left(\dfrac{-c\,v_n - k\,u_n}{m}\right)
+        u^*_{n+1} &= u_n + h\,v_n \\
+        v^*_{n+1} &= v_n + h\,\left(\frac{-c\,v_n - k\,u_n}{m}\right)
     \end{align*}
 
-    
     \item \textbf{Paso corrector:}
 
-    Se corrigen las estimaciones obtenidas en el paso predictor, utilizando un promedio de las derivadas (evaluadas en las funciones fuente) en el instante $t^n$ y en el instante $t^{n+1}$ utilizando los valores predichos ($u^{n+1}$ y $v^{n+1}$):
-    
+    Se corrigen las estimaciones obtenidas en el paso predictor, utilizando un promedio de las pendientes aproximadas evaluadas en $t_n$ y en $t_{n+1}$ (con los valores predichos):
+
     \begin{align*}
-        u^{n+1} &= u^n + \frac{h}{2} (v^n + v^*^{n+1}) \\
-        v^{n+1} &= v^n + \frac{h}{2} \left[ \dfrac{-c.v^n - k.u^n}{m} + \dfrac{-c.v^{*n+1} - k.u^{*n+1}}{m} \right]
+        u_{n+1} &= u_n + \frac{h}{2}\,\bigl(v_n + v^*_{n+1}\bigr) \\
+        v_{n+1} &= v_n + \frac{h}{2}\,\left[\frac{-c\,v_n - k\,u_n}{m} + \frac{-c\,v^*_{n+1} - k\,u^*_{n+1}}{m}\right]
     \end{align*}
+    
 \end{itemize}
 
-De forma tal que $u^*_{n+1}$ y $v^*_{n+1}$ son los valores predichos en el paso predictor, y $u_{n+1}$ y $v_{n+1}$ son los valores corregidos que se utilizan para el siguiente paso.
-
-Se parte de suponer que el método, al considerar el promedio de la pendiente inicial y la precalculada, mejora la precisión respecto de Euler, lo cual ínvita a estudiarse empíricamente.
-
-A partir de este sistema y la definición de las condiciones iniciales y constantes que nos definen los casos particulares a analizar, se implementa el algoritmo de Runge-Kutta de orden 2 para obtener las aproximaciones numéricas correspondientes.
+Se supone que el método, al considerar el promedio de la pendiente inicial y la precalculada, mejora la precisión respecto a Euler, lo cual se estudiará empíricamente.
 
 \subsubsection{Análisis de precisión y estabilidad}
 
-En cuanto a la precisión de este método, de acuerdo a la teoría se espera que sea de orden O(2). Esto implicaría que el error de truncamiento sea proporcional a $h^2$ (despreciando términos de orden superior), lo que sugiere que al reducir el paso de discretización $h$ a la mitad, el error global (bajo ciertas condiciones) se espera que se reduzca aproximadamente a la cuarta parte. Otro elemento a verificar empíricamente.
+En cuanto a la precisión, este método es de orden $\mathcal{O}(h^2)$, lo que implica que el error de truncamiento es proporcional a $h^2$. Por lo tanto, al reducir el paso de discretización $h$ a la mitad, el error global (bajo ciertas condiciones) se reduce aproximadamente a la cuarta parte.
 
-Respecto a la estabilidad, cabe destacar que este esquema resulta explícito, ya que los valores en el paso $n+1$ se calculan directamente a partir de valores ya conocidos en el paso $n$ y los valores predichos en el paso $n+1$, por lo que es condicionalmente estable al igual que Euler Explicito.
-
-Dada la complejidad que implica calcular el radio espectral de la matriz de amplificación para este caso, se opta por verificar empíricamente el rango de estabilidad para el paso $h$, a partir de observar el comportamiento en los valores propuestos. 
+Respecto a la estabilidad, al ser un esquema explícito, su estabilidad es condicional al igual que Euler Explícito y es posible calcular la matriz de amplificación para así estudiar el radio espectral y determinar el rango de $h$ para que el sistema sea estable. No obstante, al resultar un cálculo más complejo y poco práctico para el alcance del presente trabajo, se opta por estudiar empíricamente cuál será dicho rango de estabilidad para el paso $h$.
 
 \subsection{Resultados empíricos}
 
-A partir del marco analítico previamente presentado, se ofrece a continuación un análisis empírico y comparativo entre los métodos presentados. Para ello, pasamos a establecer cuál será el marco común para realizar dicha comparativa, con el fin de que los contrastes entre los resultados se deban unicamente a la variación de amortiguación del sistema, lo que resultar de interés estudiar para este trabajo.
+A partir del marco analítico previamente presentado, se ofrece a continuación un análisis empírico y comparativo entre los métodos. Se establece un marco común para realizar la comparativa, de modo que las diferencias sean atribuidas únicamente a la variación del amortiguamiento.
 
 \subsubsection{Condiciones Iniciales}
 
-Dentro del rango propuesto por la cátedra, se optó por establecer las siguientes constantes comunes a todos los casos de prueba:
+Se optó por establecer las siguientes constantes comunes a todos los casos de prueba:
 
 \begin{itemize}
-    \item $u_0 = 10^{-2} {m}$
-    \item $v_0 = 1 \frac{m}{s}$
-    \item Pasos de integración: $h \in \{0.1s,\ 0.05s,\ 0.025s\} $
-    \item Tiempos finales: $t_{\text{final}} \in \{0.5s,\ 2s,\ 5s,\ 10s\}$
+    \item $u_0 = 10^{-2}\,\text{m}$
+    \item $v_0 = 1\,\tfrac{\text{m}}{\text{s}}$
+    %\item Tiempos finales: $t_{\text{final}} \in \{0.5\,\text{s},\,2\,\text{s},\,5\,\text{s},\,10\,\text{s}\}$ 
 \end{itemize}
-
-
 
 \subsubsection{Caso subamortiguado (\(\zeta < 1\))}
 
 Para el estudio de este caso, se tomaron los siguientes valores:
 
 \begin{itemize}
-    \item \( m = 1kg \)
-    \item \( c = 5 \frac{Ns}{m} \)
-    \item \( k = 100 \frac{N}{m} \)
+    \item \( m = 1\,\text{kg} \)
+    \item \( c = 5\,\tfrac{\text{Ns}}{\text{m}} \)
+    \item \( k = 100\,\tfrac{\text{N}}{\text{m}} \)
 \end{itemize}
 
 Lo que significa un $\zeta = 0.25$.
 
-
-
-Se procedió entonces a obtener una solución analítica del modelo mediante la herramienta \textit{WolframAlpha} y se obtuvo la siguiente solución:
+Se obtuvo la solución analítica mediante \textit{WolframAlpha}:
 
 \[
 x(t) = e^{-\frac{5t}{2}} \left(
-   0{,}01\,\cos\left(\tfrac{5\sqrt{15}}{2}t\right)
-   + 0{,}105862\,\sin\left(\tfrac{5\sqrt{15}}{2}t\right)
+   0.01\,\cos\!\bigl(\tfrac{5\sqrt{15}}{2}t\bigr)
+   + 0.105862\,\sin\!\bigl(\tfrac{5\sqrt{15}}{2}t\bigr)
 \right).
 \]
 
-Dicha solución resultó de utilidad para medir los errores de los modelos propuestos.
+Dicha solución se usó para medir los errores de los modelos propuestos.
 
-A continuación, se muestra una comparativa entre la solución óptima y las aproximaciones calculadas para los distintos $h_s$, para ambos modelos presentados:
+Reemplazando en el cálculo de los autovalores que se realizó anteriormente, se obtiene:
 
+\[
+\lambda_1 = \frac{2 - 5\,h - 5\,i\sqrt{15}\,h}{2}, 
+\quad
+\lambda_2 = \frac{2 - 5\,h + 5\,i\sqrt{15}\,h}{2}.
+\]
+
+Para que el sistema sea estable (radio espectral $\leq 1$), las cuentas indican:
+
+\[
+0 \leq h \leq \frac{1}{20} = 0.05.
+\]
+
+A continuación, se muestra una comparativa entre la solución analítica y las aproximaciones para distintos valores de $h$. Comenzamos analizando para el método de Euler Explicito:
 
 \begin{figure}[H]
+
   \centering
-  \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=0.25/caso 1.png}
-  \label{fig:euler_subamortiguado}
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=0.25/caso 1.png}
+    \caption{comportamiento de $u(t) \in [-2;4]$}
+    \label{fig:imagen1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=0.25/caso 1_2.png}
+    \caption{Comportamiento de $u(t)$ $\in [-2, 4]$}
+
+    \label{fig:imagen2}
+  \end{minipage}
+  
 \end{figure}
 
 \begin{figure}[H]
+
   \centering
-  \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/RK2/z=0.25/caso 1_2.png}
-  \label{fig:euler_subamortiguado}
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering %puto el que lee
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/euler_explicito/z=0.25/t_final_0,5.png}
+    \caption{Errores hasta t = 0.5s}
+    \label{fig:imagen3}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/euler_explicito/z=0.25/t_final_2.png}
+    \caption{Errores hasta t = 2s}
+
+    \label{fig:imagen4}
+  \end{minipage}
+  
 \end{figure}
 
-Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza.Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza. Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza.Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza.
+Estos primeros gráficos para el caso subamortiguado y el método de Euler Explícito, se observa una solución analítica con un comportamiento oscilatorio que tiende a reducirse a mayor \textit{t}. También se puede observar que para $h > 0,05$, la aproximación numérica se vuelve inestable y los gráficos evidencian una rápida divergencia respecto a la solución analítica (notar cómo para h = 0.1, llega un punto que el método diverge cada vez más). Este comportamiento se hace notar a partir de oscilaciones no propias del problema físico, que cambian su frecuencia o período en función de $h$, evidenciando un “efecto serrucho”. Por otro lado, para h < 0.05 (en este caso h = 0.025) se evidencia cómo la aproximación primero tiene un lapso de inestabilidad, la cual va decreciendo con el tiempo. Se hace notar cómo los errores locales en cada paso son menores que los anteriores, generando una tendencia asintótica en el error global. Esta combinación de consistencia y estabilidad, de acuerdo con el \textbf{Teorema de Lax}, garantiza que el método sea convergente.
+Para h = 0.05, vemos un comportamiento de \textbf{estabilidad marginal}, donde el error queda oscilando entre valores fijos. También se puede observar en general cómo, al reducirse el paso h a la mitad, los errores tienden a comportarse aproximadamente de forma proporcional, lo cual coincide con la teoría.
 
+A continuación, observamos qué sucede para RK2:
 
-% --- Caso críticamente amortiguado ---
+\begin{figure}[H]
+
+  \centering
+  \begin{minipage}[b]{0.6\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/RK2/z=0.25/caso 1.png}
+    \caption{comportamiento de $u(t) \in [-0.04;0.08]$}
+    \label{fig:imagen5}
+  \end{minipage}
+  \hfill
+\end{figure}
+
+\begin{figure}[H]
+
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=0.25/t_final_0,5.png}
+    \caption{Errores hasta t = 0.5}
+    \label{fig:imagen6}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=0.25/t_final_2.png}
+    \caption{Errores hasta t = 2s}
+
+    \label{fig:imagen7}
+  \end{minipage}
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=0.25/t_final_5.png}
+    \caption{Errores hasta t = 5s}
+    \label{fig:imagen8}
+  \end{minipage}
+  
+\end{figure}
+
+Para este método, lo primero que se destaca en comparación al de Euler Explícito es la mejora respecto a la precisión: Los errores en general para los distintos \textit{h} son mucho menores. También es destacable como al reducirse a la mitad el paso, los errores se reducen a una cuarta parte como era de esperarse respecto a la teoría, lo que nos confirma la consistencia del método. 
+Respecto a la estabilidad, podemos notar que para todos los pasos realizados el método no se comporta de forma inestable, de hecho para todos los pasos el método muestra convergencia a medida que se avanza iterativamente. Esto sugiere que el método es estable, por lo menos, para \textbf{$h < 0.1$}. 
+
 
 \subsubsection{Caso críticamente amortiguado ($\zeta = 1$)}
 
 Para el estudio de este caso, se tomaron los siguientes valores:
 
 \begin{itemize}
-    \item $m = 0.1\,\text{kg}$
-    \item $c = 0.55\,\frac{\text{Ns}}{\text{m}}$
-    \item $k = 0.625\,\frac{\text{N}}{\text{m}}$
+    \item $m = 0.1\,\text{kg}$,
+    \item $c = 0.55\,\tfrac{\text{Ns}}{\text{m}}$,
+    \item $k = 0.625\,\tfrac{\text{N}}{\text{m}}$.
 \end{itemize}
 
 Lo que significa un $\zeta = 1$.
 
-Se procedió entonces a obtener una solución analítica del modelo mediante la herramienta \textit{WolframAlpha} y se obtuvo la siguiente solución:
+Solución analítica:
 
 \[
-x(t) = -0.443438\,\exp\left(-3.89564\,t\right) + 0.453438\,\exp\left(-1.60436\,t\right)
+x(t) = -0.443438\,e^{-3.89564\,t} + 0.453438\,e^{-1.60436\,t}.
 \]
 
-Dicha solución resultó de utilidad para medir los errores de los modelos propuestos.
+Autovalores y condiciones sobre $h$  en el método Euler explícito ( interesa la cota más restrictiva):
 
-A continuación, se muestra una comparativa entre la solución óptima y las aproximaciones calculadas para los distintos $h_s$, para ambos modelos presentados:
+\[
+\lambda_1 = \frac{2 - 5.5\,h - h\,\sqrt{5.25}}{2}, 
+\quad
+\lambda_2 = \frac{2 - 5.5\,h + h\,\sqrt{5.25}}{2},
+\]
+
+Lo que nos da un \textit{h} en el siguiente rango: 
+\[
+0 < h < 0.513394 \approx 0.5
+\]
+
+Comparativas:
 
 \begin{figure}[H]
+
   \centering
-  \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=1/caso_2.png}
-  \caption{Comparación entre la solución analítica y las aproximaciones numéricas (Euler Explícito) para el caso críticamente amortiguado.}
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=1/caso 2.png}
+    \caption{comportamiento de $y(t) \in [-0.4;0.4]$}
+    \label{fig:imagen9}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=1/caso 2_2.png}
+    \caption{comportamiento de $y(t) \in [-1000;1000]$}
+
+    \label{fig:imagen11}
+  \end{minipage}
+  
 \end{figure}
 
 \begin{figure}[H]
+
   \centering
-  \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/RK2/z=1/caso_2.png}
-  \caption{Comparación entre la solución analítica y las aproximaciones numéricas (Runge-Kutta 2) para el caso críticamente amortiguado.}
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering %puto el que lee
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/euler_explicito/z=1/t_final=2.png}
+    \caption{Errores hasta t = 2s}
+    \label{fig:imagen11}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/euler_explicito/z=1/t_final=5.png}
+    \caption{Errores hasta t = 5s}
+
+    \label{fig:imagen12}
+  \end{minipage}
+  
 \end{figure}
 
-% --- Caso sobreamortiguado ---
 
-\subsubsection{Caso sobreamortiguado ($\zeta > 1$)}
+En este caso, la solución analítica nos muestra un gráfico donde hay una  oscilación al principio y luego la función tiende a 0 asintóticamente. Podemos decir que para este caso, la tolerancia respecto al paso máximo que se puede dar para que haya estabilidad aumentó. Es decir, \textbf{a priori podemos decir que a mayor amortiguamiento, mayor es el paso que puedo dar manteniendo estabilidad}. Podemos plantear como hipotesis que para un mismo $h$ tendremos mayor velocidad de convergencia, a mayor sea el amortiguamiento. Esto lo seguiremos comprobando para el siguiente caso. 
+Respecto al comportamiento entre los $h_s$, notamos la tendencia esperada de reducción a la mitad de los errores cuando el $h$ se reduce a la mitad. Para $h < 0.5$, el método muestra la convergencia esperada respecto al análisis teórico anteriormente descripto.     
+
+A continuación pasamos a mostrar los gráficos pertinentes a RK2 para este caso:
+
+\begin{figure}[H]
+
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/RK2/z=1/caso 2.png}
+    \caption{comportamiento de $y(t) \in [-0.08;0]$}
+    \label{fig:imagen13}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/RK2/z=1/caso 2_2.png}
+    \caption{Variacion del t final a 40s}
+
+    \label{fig:imagen14}
+  \end{minipage}
+  
+\end{figure}
+
+\begin{figure}[H]
+
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering %puto el que lee
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=1/t_final=2.png}
+    \caption{Errores hasta t = 2s}
+    \label{fig:imagen15}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=1/t_final=5.png}
+    \caption{Errores hasta t = 5s}
+
+    \label{fig:imagen16}
+  \end{minipage}
+  
+\end{figure}
+
+Para este caso, podemos confirmar empiricamente que el método resulta estable y que converge para $h<0.5$. Notar también la rápida divergencia para un h que es el doble de $0.5$. Es interesante notar que, evidentemente el paso  máximo para que el método sea convergente, no necesariamente es $0.5$, tal que es posible notar que para un t final de 40s, la aproximación termina convergiendo. 
+
+El método también muestra una conservación del signo mostrandose más estable y con una convergencia más veloz en términos generales. 
+
+
+\subsubsection{Caso sobreamortado ($\zeta > 1$)}
 
 Para el estudio de este caso, se tomaron los siguientes valores:
 
 \begin{itemize}
-    \item $m = 10\,\text{kg}$
-    \item $c = 10\,\frac{\text{Ns}}{\text{m}}$
-    \item $k = 0.5\,\frac{\text{N}}{\text{m}}$
+    \item $m = 10\,\text{kg}$,
+    \item $c = 10\,\tfrac{\text{Ns}}{\text{m}}$,
+    \item $k = 0.5\,\tfrac{\text{N}}{\text{m}}$.
 \end{itemize}
 
 Lo que significa un $\zeta = 3.16$.
 
-Se procedió entonces a obtener una solución analítica del modelo mediante la herramienta \textit{WolframAlpha} y se obtuvo la siguiente solución:
-
+Solución analítica:
 \[
-x(t) = -1.11862\,\exp\left(-0.947214\,t\right) + 1.12862\,\exp\left(-0.0527864\,t\right)
+x(t) = -1.11862\,e^{-0.947214\,t} + 1.12862\,e^{-0.0527864\,t}.
 \]
 
-Dicha solución resultó de utilidad para medir los errores de los modelos propuestos.
+Autovalores y condiciones sobre $h$  en el método Euler explicito:
 
-A continuación, se muestra una comparativa entre la solución óptima y las aproximaciones calculadas para los distintos $h_s$, para ambos modelos presentados:
+\[
+\lambda_{1,2} = \frac{(2 - h) \pm h\sqrt{0.8}}{2}
+\]
+\[
+0 \le h \le 2.111
+\]
+
+Comparativas:
 
 \begin{figure}[H]
+
   \centering
-  \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=3.16/caso_3.png}
-  \caption{Comparación entre la solución analítica y las aproximaciones numéricas (Euler Explícito) para el caso sobreamortiguado.}
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=2.23/caso 3.png}
+    \caption{comportamiento de $y(t) \in [-6;4]$}
+    \label{fig:imagen13}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/euler_explicito/z=2.23/caso 3_2.png}
+    \caption{comportamiento de $y(t) \in [-0.5;3]$}
+
+    \label{fig:imagen14}
+  \end{minipage}
+  
 \end{figure}
 
 \begin{figure}[H]
+
   \centering
-  \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/RK2/z=3.16/caso_3.png}
-  \caption{Comparación entre la solución analítica y las aproximaciones numéricas (Runge-Kutta 2) para el caso sobreamortiguado.}
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering %puto el que lee
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=2.23/t_final=10.png}
+    \caption{Errores hasta t = 10s}
+    \label{fig:imagen15}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=2.23/t_final=20.png}
+    \caption{Errores hasta t = 20s}
+
+    \label{fig:imagen16}
+  \end{minipage}
+  
 \end{figure}
 
+Observamos nuevamente que el análisis de estabilidad hecho analíticamente se ve reflejado en los gráficos. En este caso sobreamortiguado, la solución análitica nos muestra una menor oscilación en la función, lo cual era esperable. También nuestra hipotesis formulada en el método anterior respecto a notar un mayor $h$ máximo para la estabilidad, a medida que crece el indice de amortiguamiento, se sigue cumpliendo.
+
+Cuando $h < 2.1$ para este caso de Euler Explícito, el método se aproxima rápidamente a la solución analítica, con errores que tienden a cero con el tiempo. Al igual que en el caso anterior de amortiguamiento notamos que para el método de Euler Explícito, el error es proporcional al $h$.
+
+Cuando $h = 2.21$, Euler Explicito presenta un comportamiento marginalmente estable: la solución numérica oscila sin amortiguarse ($|g^n| = 1$), generando una oscilación constante. 
+
+Si $h > 2.21$, se pierde la estabilidad numérica. En Euler Explcito, el error se amplifica y aparecen oscilaciones grandes  ($|g^n| > 1$).
+
+\begin{figure}[H]
+
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/RK2/z=2.23/caso 3.png}
+    \caption{comportamiento de $y(t) \in [-0.08;0]$}
+    \label{fig:imagen13}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_analitica_aproximada/RK2/z=2.23/caso 3_3.png}
+    \caption{Variacion del t final a 40s}
+
+    \label{fig:imagen14}
+  \end{minipage}
+  
+\end{figure}
+
+\begin{figure}[H]
+
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering %puto el que lee
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=2.23/t_final=10.png}
+    \caption{Errores hasta t = 2s}
+    \label{fig:imagen15}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resultados/comparacion_errores/RK2/z=2.23/t_final=20.png}
+    \caption{Errores hasta t = 5s}
+
+    \label{fig:imagen16}
+  \end{minipage}
+  
+\end{figure}
+
+Para este caso en particular, podemos ver claramente como el error se reduce cuadraticamente \textit{(figura 22)}. Notamos también que el error no posee un comportamiento oscilatorio, al igual que sucedia en el caso críticamente amortiguado. También sucede que para el doble del valor crítico calculado en Euler Explicito, hay una divergencia veloz. Lo que se puede confirmar también a partir de los gráficos es que para $h < 2.1$, el método resulta estable. 
+
+Vemos que también tiende a alinearse con la solución teórica con el tiempo más rapidamente, lo que refleja su mayor robustez cerca del límite de estabilidad. la desviación es menos abrupta. 
 
 \section{Incorporación de no linealidad y análisis del oscilador de Duffing}
 
-Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza.Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza. Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza.Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza Saraza saraza.
+Tras haber analizado el comportamiento en el modelo lineal, en esta sección se introduce el término no lineal \(\alpha\,x^3\) al modelo de Masa–resorte–amortiguador, con el objetivo de estudiar el comportamiento de los métodos numéricos de la Parte 1 y realizar un análisis cualitativo de los resultados obtenidos.
 
+\subsection{Modificación del modelo}
+
+El modelo lineal base es:
+\[
+m\,x''(t) + c\,x'(t) + k\,x(t) = 0.
+\]
+Para incorporar la rigidez no lineal, agregamos el término \(\alpha\,x(t)^3\). La ecuación de Duffing resulta en:
+\[
+m\,x''(t) + c\,x'(t) + k\,x(t) + \alpha\,x(t)^3 = 0
+\]
+
+Al igual que hicimos anteriormente, es posible definir las variables de estado
+\[
+\begin{aligned}
+u(t) &= x(t)\\
+v(t) &= x'(t)
+\end{aligned}
+\]
+de modo que el sistema de primer orden equivale a:
+\[
+\begin{cases}
+u'(t) = v(t)\\[6pt]
+v'(t) = \displaystyle \frac{-\,c\,v(t) \;-\; k\,u(t) \;-\; \alpha\,u(t)^3}{m}
+\end{cases}
+\]
+
+\subsection{Resolución analítica del sistema no lineal}
+
+Para resolver numéricamente el sistema anterior, se utilizan los mismos esquemas numéricos empleados en la Parte 1:
+
+\begin{enumerate}
+    \item \textbf{Método de Euler Explícito:}
+    \[
+    \begin{aligned}
+    u^{n+1} &= u^n + h\,v^n,\\[6pt]
+    v^{n+1} &= v^n + h\,\frac{-\,c\,v^n \;-\; k\,u^n \;-\; \alpha\,\bigl(u^n\bigr)^3}{m}
+    \end{aligned}
+    \]
+    Observación: en cada paso, es posible evalúae directamente \(\bigl(u^n\bigr)^3\), ya que el método es explícito.
+
+    \item \textbf{Método de Runge–Kutta de orden 2 (RK2 / Euler Modificado):}  
+    \emph{Paso predictor:}
+    \[
+    \begin{aligned}
+    u^{*}_{n+1} &= u_n + h\,v_n,\\[6pt]
+    v^{*}_{n+1} &= v_n + h\,\frac{-\,c\,v_n \;-\; k\,u_n \;-\; \alpha\,\bigl(u_n\bigr)^3}{m}.
+    \end{aligned}
+    \]
+    \emph{Paso corrector:}
+    \[
+    \begin{aligned}
+    u_{n+1} &= u_n + \frac{h}{2}\,\bigl(v_n + v^{*}_{n+1}\bigr),\\[6pt]
+    v_{n+1} &= v_n + \frac{h}{2}\
+    \Bigl[\bigl(-\,c\,v_n - k\,u_n - \alpha\,u_n^3\bigr) 
+    + \bigl(-\,c\,v^{*}_{n+1} - k\,u^{*}_{n+1} - \alpha\,(u^{*}_{n+1})^3\bigr)\Bigr]
+    \end{aligned}
+    \]
+    De nuevo, se calcula \(\alpha\,u^3\) usando los valores conocidos o predichos en cada paso. El método al utilizar aproximación ya aproximada, también resulta explicito. 
+    
+    A nivel cálculos, notar que al haber elegido los métodos Euler Explicito y RK2, no se presentan mayores inconvenientes.  
+\end{enumerate}
+
+\subsection{Análisis cualitativo de la solución}
+
+Para el análisis cualitativo del comportamiento de \(u(t)\) se procede a examinar la existencia de las siguientes posibles características que definimos a continuación:
+
+\begin{itemize}
+    \item \textbf{Oscilaciones periódicas:} la forma de onda se repite con amplitud y frecuencia constantes.
+    \item \textbf{Comportamiento amortiguado:} la amplitud de las oscilaciones disminuye con el tiempo.
+    \item \textbf{Comportamiento amplificado o inestable:} la amplitud crece con el tiempo, lo que interpretamos que puede indicar inestabilidad numérica para $h_s$ demasiados grandes.
+    \item \textbf{Comportamiento caótico:} no hay una frecuencia bien definida y la trayectoria no se repite ni se cierra.
+\end{itemize}
+
+%---------------------------------------------------------
+
+\subsection{Resultados Empíricos}
+
+Para los gráficos de a continución, se optó por realizar las mediciones pertinentes mediante el método Euler Explícito. Se decidió centrarnos en este método para el análisis no lineal dada su conveniencia en términos de su resolución y poder focalizarnos en la incidencia del termino no lineal $\alpha x(t)^3$). La baja complejidad computacional del método resulta conveniente para que en la corrida no tener errores de \textit{Overflow}, cosa que sucedió al querer resolver por RK2.
+
+Cabe destacar también, que los análisis de estabilidad realizados en la Parte 1 para Euler Explícito nos permiten reutilizar los rangos de pasos de cálculo $h$ donde el método es estable y preciso. Dichos valores de $h$ resultan útiles para garantizar que las soluciones numéricas para el sistema de Duffing no muestren inestabilidades numéricas artificiales y reflejen el comportamiento físico intrínseco de la no linealidad. 
+Al utilizar un método ya familiar y con un $h$ adecuado, se mantiene la claridad en los gráficos, permitiendo un análisis focalizado en los fenómenos no lineales del sistema.
+
+Se han separados los casos de forma conveniente con lo investigado acerca de los Osciladores de Duffing, explayado más adelante
+
+%----------------------------------------------------------
+
+\subsubsection{Caso $\alpha > 0$ }
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha>0/z<1/grafico_no_lineal_caso1_alpha_10.png}
+        \caption{$\zeta < 1$, $\alpha=10$}
+    \end{minipage}
+\begin{minipage}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{resultados/parte_2/alpha>0/z<1/grafico_no_lineal_caso1_alpha_250.png}
+    \caption{$\zeta < 1$, $\alpha=250$}
+\end{minipage}
+\hfill
+\end{figure}
+
+En el caso sub-amortiguado que se puede observar en la figura 25, para el $h$ que se había acordado como $h_{max} = 0.05$ , la aproximación oscilaría entre valores sin aumentar ni reducir sus errores, es decir, se observan oscilaciones periodicas. Sin embargo, en la \textit{Figura 26} cuando $\alpha$ toma un valor mayor en magnitud, ahora la aproximación muestra una onda que tiende a amplificarse: Se observa mayor amplitud y frecuencia de la onda, a medida que pasa el tiempo. 
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{resultados/parte_2/alpha>0/z=1/grafico_no_lineal_caso2_alpha_10.png}
+            \caption{$\zeta = 1$, $\alpha=10$}
+    \end{minipage}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha>0/z=1/grafico_no_lineal_caso2_alpha_250.png}
+        \caption{$\zeta = 1$, $\alpha=250$}
+    \end{minipage}
+    \hfill
+\end{figure}
+
+Para el caso estrictamente amortiguado, observamos un comportamiento caótico y más inestable para la \textit{Figura 27}. Al aumentar la magnitud en la \textit{Figura 28} se nota claramente un aumento en la frecuencia y amplitud de la aproximación  para el $h$ más grande, tendiendo a una oscilación periodíca, pero con una onda no tan suave. Comparando con la \textit{Figura 27}, observamos que fue necesario tomar $h$ mucho mas pequeños para conservar la estabilidad, lo que señala mayor inestabilidad a mayor sea el $\alpha$. Esto se condice con el caso anterior $\zeta < 1$. 
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha>0/z>1/grafico_no_lineal_caso3_alpha_10.png}
+        \caption{$\zeta > 1$, $\alpha=10$}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha>0/z>1/grafico_no_lineal_caso3_alpha_50.png}
+        \caption{$\zeta > 1$, $\alpha=50$}
+    \end{minipage}
+\end{figure}
+
+Por último, para el caso sobre-amortiguado, se toman valores de $h$ 10 veces menores a los anteriormente utilizados en la parte 1 para mantener aproximaciones estables. Se hace notar también que a mayor sea la magnitud de $\alpha$, la presencia de oscilaciones algo deformadas para $h_s$ más grandes, se hace notar al igual que en el caso anterior, con una gran amplitud que va decayendo. Se sospecha que esto último puede deberse a la presencia del sobre-amortiguamiento que acelera la convergencia.
+
+Ante todos estos casos, podemos plantear como hipótesis que a mayor amortiguamiento, el sistema tiende a estabilizarse y converger más rapidamente y a mayor $\alpha$ el sistema parece comportarse de forma más caotíca, tendiendo a oscilaciones periodicas en la aproximación, con presencia de deformaciones. 
+
+
+%----------------------------------------------
+
+\subsubsection{Caso $\alpha < 0$ }
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z<1/grafico_no_lineal_caso1_alpha_m10.png}
+        \caption{$\zeta < 1$, $\alpha=-10$}
+    \end{minipage}
+\begin{minipage}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z<1/grafico_no_lineal_caso1_alpha_m7000.png}
+    \caption{$\zeta < 1$, $\alpha=-7000$}
+\end{minipage}
+\hfill
+\end{figure}
+
+Para este caso se observa un comportamiento altamente convergente para los $h_s$ que tienden a 0. No obstante, es evidente como se dispara en oscilaciones periodicas con alta amplitud y frecuencia para un $\alpha = -10$. No obstante, al aumentar considerablemente la magnitud de $\alpha$, la aproximación se muestra de menor amplitud y con tendencia a reducirse en el tiempo. 
+
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.6\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z=1/alpha-10caso2.png}
+            \caption{$\zeta = 1$, $\alpha=-10$}
+    \end{minipage}
+
+
+    \begin{minipage}[b]{0.6\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z=1/alpha-500caso2.png}
+        \caption{$\zeta = 1$, $\alpha=-500$}
+    \end{minipage}
+
+
+\end{figure}
+
+\begin{figure}[H]
+        \centering
+    \begin{minipage}[b]{0.6\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z=1/grafico_no_lineal_caso2_alpha_m20.png}
+        \caption{$\zeta = 1$, $\alpha=-20$}
+    \end{minipage}
+\end{figure}
+
+Para este caso críticamente amortiguado, es interesante notar un comportamiento altamente divergente y caotíco. La tendencia indica que a mayor sea el $\alpha$ hay un mayor grado de divergencia para los $h_s$ planteados en la \textit{Figura 33} y \textit{Figura 34}.
+
+En la \textit{Figura 35}, se aprecia como hay que reducir bastante el paso para tener un comportamiento estable. Sin embargo, como se aprecia que ya para un $h = 0.1$, ya se vuelve a tener un comportamiento divergente. 
+
+\begin{figure}[H]
+    \centering
+    
+    \begin{minipage}[b]{0.40\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z>1/alpha-1caso3.png}
+        \caption{$\zeta > 1$, $\alpha=-1$}
+    \end{minipage}
+    
+    \hfill
+    
+    \begin{minipage}[b]{0.40\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z>1/alpha-2caso3.png}
+        \caption{$\zeta > 1$, $\alpha=-500$}
+    \end{minipage}
+
+    
+\end{figure}
+Para estos dos primeros casos observamos que los valores de $h$ muestran inestabilidad en sus respectivas aproximaciones,  sugiriendo proporcionalidad con la magnitud de $\alpha$. 
+\begin{figure}[H]
+    \centering
+    
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z>1/grafico_no_lineal_caso3_alpha_m1.png}
+        \caption{$\zeta > 1$, $\alpha=-1$}
+    \end{minipage}
+    
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resultados/parte_2/alpha<0/z>1/grafico_no_lineal_caso3_alpha_m10.png}
+        \caption{$\zeta > 1$, $\alpha=-10$}
+    \end{minipage}
+
+    
+\end{figure}
+Para las cuatro figuras anteriores, sin importar el tamaño de paso tomado ($h$), observamos trayectorias no periódicas y caóticas, incluso para valores de $\alpha$ de magnitud considerablemente pequeños respecto a los casos observados con anterioridad.
+
+\subsection{Investigación acerca del Oscilador de Duffing}
+
+Tras las observaciones empíricas ofrecidas anteriormente, procedemos a analizar que indican fuentes teóricas para luego ofrecer un contraste entre lo observado y lo que indican dichas fuentes. Se tomará como referencia bibliográfica el libro \textit{S.~H. Strogatz, \emph{Nonlinear Dynamics and Chaos}, Westview Press, 2ª edición, 2018.}, del cual se extrajo la siguiente información relevante:
+
+\subsubsection{Aplicaciones del modelo en la práctica}
+
+Las fuentes describen al Oscilador de Duffing como un modelo clásico de oscilador no lineal capaz de aplicarse en diferentes contextos. Menciona que el estudio de la dinámica en auge en la primera mitad del siglo XX, trajo aparejado el estudio de las oscilaciones no lineales, las cuales representan un rol fundamental en el desarrollo de tecnologías como \textbf{la radio, radares, láseres y bucles de enganche de fase (phase-locked loops)}, por ejemplo. En el ámbito teórico, los osciladores no lineales también estimularon la invención de nuevas técnicas matemáticas. Entre los pioneros en esta área se encuentran van der Pol, Andronov, Littlewood, Cartwright, Levinson y Smale. 
+
+Particularmente el Oscilador de Duffing, aparece aplicado en el oscilador de doble pozo forzado:  Un sistema físico, como las vibraciones forzadas de una viga accionada por un generador de vibración electromagnética, el cuál se modela con una ecuación similar al oscilador de Duffing: $x + \delta x + x - x^3 = F cos(\omega t)$.
+
+Por otro lado, la invención de la computadora de alta velocidad en la década de 1950 marcó un hito en la historia de la dinámica, lo que permitió experimentar con ecuaciones de una manera que antes era imposible, y así desarrollar cierta intuición sobre los sistemas no lineales. Tales experimentos condujeron al descubrimiento de Lorenz en 1963, el cual desarrolló un modelo simplificado de las corrientes de convección en la atmósfera para entender la notoria imprevisibilidad del clima. El libro destaca este experimento de Lorenz como un hito que lo llevo a encontrar "\textit{estructura dentro del caos}".
+
+
+\subsubsection{Importancia como modelo no lineal}
+
+El Oscilador de Duffing se presenta como uno de los ejemplos fundamentales de \textbf{osciladores débilmente no lineales}. Puede interpretarse físicamente como el movimiento de una masa unida a un muelle no lineal con una fuerza restauradora, donde la rigidez del muelle depende del desplazamiento. Además, exhibe comportamientos que son intrínsecamente no lineales, como la dependencia de la frecuencia de la oscilación con su amplitud, lo cual no ocurre en un oscilador lineal.
+
+El modelo también resultó importante al ser utilizado para ilustrar y probar métodos de análisis de sistemas no lineales, como las técnicas de perturbación (\textit{two-timing, Poincaré-Lindstedt}) y el estudio de bifurcaciones globales de ciclos.
+
+
+\subsubsection{Comportamientos posibles esperados dentro del modelo}
+
+Dentro del Oscilador de Duffing, la fuente indica que es probable encontrar un comportamiento dependiente de la amplitud, una frecuencia variable, posible inestabilidad y trayectorias que pueden divergir o aplanarse según el signo y valor de \(\alpha\). Particularmente, se estudia al coeficiente \(\alpha\) (rigidez no lineal) afectando el comportamiento de maneras distintas.
+
+\subsubsection{Caso $\alpha > 0$ (resorte endurecedor)}
+
+Cuando $\alpha > 0$, el sistema se comporta como un resorte "endurecedor" (hardening spring) y se espera encontrar las siguientes características:
+\begin{itemize}
+    \item La frecuencia de oscilación aumenta con la amplitud: a mayor desplazamiento, la rigidez efectiva crece y el sistema oscila más rápido.
+    \item La respuesta puede mostrar deformaciones en la forma de onda, con oscilaciones más "rígidas" y rápidas a medida que crece la amplitud.
+    \item Para valores suficientemente grandes de $\alpha$, pueden aparecer fenómenos de bifurcación, saltos de amplitud o incluso comportamientos caóticos si el sistema es forzado.
+    \item En presencia de amortiguamiento, la amplitud decae pero la frecuencia sigue dependiendo de la amplitud instantánea.
+\end{itemize}
+
+\subsubsection{Caso $\alpha < 0$ (resorte ablandador)}
+
+Para $\alpha < 0$, el sistema se comporta como un resorte \textit{ablandador} (softening spring) donde:
+\begin{itemize}
+    \item La frecuencia de oscilación disminuye con la amplitud: a mayor desplazamiento, la rigidez efectiva disminuye y el sistema oscila más lentamente.
+    \item Es posible observar respuestas con oscilaciones de baja frecuencia y mayor duración, y para ciertos parámetros pueden aparecer trayectorias no periódicas o caóticas.
+    \item Si $|\alpha|$ es grande, el sistema puede volverse inestable, mostrando divergencia o saltos abruptos en la amplitud.
+    \item El amortiguamiento tiende a estabilizar la solución, pero la sensibilidad a las condiciones iniciales y a $\alpha$ es mayor que en el caso lineal.
+\end{itemize}
+
+\subsubsection{Comparación con el caso lineal ($\alpha = 0$)}
+
+Se destaca que, en el caso lineal con ($\alpha = 0$), la frecuencia de oscilación es constante e independiente de la amplitud, y la respuesta es siempre predecible y periódica (o amortiguada, según el régimen de $\zeta$). La introducción del término no lineal $\alpha x^3$ rompe esta regularidad, haciendo que la frecuencia y la forma de la solución dependan de la amplitud y del propio $\alpha$.
+
+\subsubsection{Síntesis}
+En resumen, la no linealidad introducida por $\alpha$ genera:
+\begin{itemize}
+    \item Dependencia de la frecuencia respecto de la amplitud (fenómeno ausente en el caso lineal).
+    \item Posibilidad de aparición de comportamientos no periódicos, bifurcaciones y caos para ciertos valores de $\alpha$ y condiciones iniciales.
+    \item Mayor sensibilidad a los parámetros y condiciones iniciales, especialmente para $|\alpha|$ grandes.
+\end{itemize}
+
+Estos comportamientos teóricos son característicos de sistemas no lineales y explican la riqueza de fenómenos observados en el oscilador de Duffing, en contraste con la previsibilidad que ofrece el sistema lineal clásico.
 
 \section{Conclusiones}
 
+A lo largo de este trabajo se analizaron y resolvieron numéricamente sistemas masa-resorte-amortiguador tanto en su versión lineal como no lineal (Duffing), empleando los métodos de Euler Explícito y Runge-Kutta de segundo orden (RK2). Se compararon los resultados numéricos con las soluciones analíticas disponibles, evaluando la precisión y estabilidad de cada método bajo distintos regímenes de amortiguamiento y no linealidad.
+
+En el caso lineal, ambos métodos reprodujeron correctamente el comportamiento esperado para los distintos valores del coeficiente de amortiguamiento relativo, mostrando que RK2 ofrece una mayor precisión y estabilidad para pasos de integración más grandes, mientras que Euler requiere pasos más pequeños para evitar inestabilidades numéricas.
+
+Para el sistema no lineal de Duffing, la presencia del término cúbico introdujo fenómenos cualitativamente distintos, como la dependencia de la frecuencia con la amplitud y la posibilidad de comportamientos no periódicos o caóticos para ciertos parámetros. Si bien se implementaron ambos métodos, en la práctica se optó por utilizar Euler Explícito para el estudio no lineal, ya que el método RK2 presentó problemas de overflow numérico en varias simulaciones, especialmente para ciertos valores de $h$ y $\alpha$. Esto limitó la aplicabilidad de RK2 en el régimen no lineal, mientras que Euler Explícito, con pasos de integración suficientemente pequeños, permitió obtener resultados estables y analizar con claridad la influencia de la no linealidad.
+
+La modularización del código y la automatización de los barridos de parámetros facilitaron el estudio sistemático de la influencia de $h$ y $\alpha$ sobre la solución, permitiendo identificar los rangos de estabilidad y la sensibilidad de los métodos frente a la rigidez del sistema. 
+
+En síntesis, el trabajo permitió comprender las ventajas y limitaciones de los métodos numéricos explícitos en la simulación de sistemas dinámicos, así como la importancia de una correcta elección de parámetros y del análisis cualitativo para interpretar los resultados. 
+
 % Aquí puedes redactar las conclusiones
 
+
 \section{Anexos}
+
 \subsection{Código implementado}
-% Aquí va el código fuente en verbatim o listings.
+A continuación se incluyen fragmentos relevantes del código utilizado para la resolución numérica de los sistemas:
+
+\subsubsection*{Euler Explícito (lineal)}
+\begin{verbatim}
+from metodos.solucion_analitica import solucion_analitica_lineal
+
+def euler_explicito(m, c, k, h, u_0, v_0, t_final, resultado_file="resultados_euler.txt", caso=None):
+    import os
+    base_dir = "corridas_numericas/sin_revisar"
+    os.makedirs(base_dir, exist_ok=True)
+    resultado_file = os.path.join(base_dir, os.path.basename(resultado_file))
+    n = int(t_final/h)
+    u_n = u_0
+    v_n = v_0
+    with open(resultado_file, "w") as f:
+        header = f"{'n':>3} {'t':>8} {'u^n':>12} {'v^n':>12} {'u^(n+1)':>12} {'v^(n+1)':>12} {'y(t)':>14} {'error':>12}"
+        f.write(header + "\n")
+        for i in range(n):
+            t = h * i
+            u_n1 = u_n + h * v_n
+            v_n1 = v_n + h / m * (-c * v_n - k * u_n)
+            y_t = solucion_analitica_lineal(t, caso)
+            error = u_n - y_t
+            f.write(f"{i:3d} {t:8.4f} {u_n:12.6f} {v_n:12.6f} {u_n1:12.6f} {v_n1:12.6f} {y_t:14.6f} {error:12.6e}\n")
+            u_n = u_n1
+            v_n = v_n1
+\end{verbatim}
+
+\subsubsection*{Runge-Kutta 2 (lineal)}
+\begin{verbatim}
+from metodos.solucion_analitica import solucion_analitica_lineal
+
+def RK2(m, c, k, h, u_0, v_0, t_final, resultado_file="resultados_RK2.txt", caso=None):
+    import os
+    base_dir = "corridas_numericas/sin_revisar"
+    os.makedirs(base_dir, exist_ok=True)
+    resultado_file = os.path.join(base_dir, os.path.basename(resultado_file))
+    def f2(u, v, c, k, m):
+        return (-c * v - k * u) / m
+    n = int(t_final / h)
+    u_n = u_0
+    v_n = v_0
+    with open(resultado_file, "w") as f:
+        header = f"{'n':>3} {'t':>8} {'u^n':>12} {'v^n':>12} {'u^(n+1)':>12} {'v^(n+1)':>12} {'y(t)':>14} {'error':>12}"
+        f.write(header + "\n")
+        for i in range(n):
+            t = h * i
+            # Predictor
+            u_pred = u_n + h * v_n
+            v_pred = v_n + h * f2(u_n, v_n, c, k, m)
+            # Corrector
+            u_n1 = u_n + (h / 2) * (v_n + v_pred)
+            v_n1 = v_n + (h / 2) * (f2(u_n, v_n, c, k, m) + f2(u_pred, v_pred, c, k, m))
+            y_t = solucion_analitica_lineal(t, caso)
+            error = u_n - y_t
+            f.write(f"{i:3d} {t:8.4f} {u_n:12.6f} {v_n:12.6f} {u_n1:12.6f} {v_n1:12.6f} {y_t:14.6f} {error:12.6e}\n")
+            u_n = u_n1
+            v_n = v_n1
+\end{verbatim}
+
+\subsubsection*{Euler Explícito (no lineal)}
+\begin{verbatim}
+def euler_explicito_no_lineal(m, c, k, h, u_0, v_0, t_final, alpha, resultado_file="resultados_euler_no_lineal.txt"):
+    base_dir = os.path.dirname(resultado_file)
+    if base_dir:
+        os.makedirs(base_dir, exist_ok=True)
+    n = int(t_final / h)
+    u_n = u_0
+    v_n = v_0
+    ts = [0]
+    us = [u_0]
+    with open(resultado_file, "w") as f:
+        header = f"{'n':>3} {'t':>8} {'u^n':>12} {'v^n':>12} {'u^(n+1)':>12} {'v^(n+1)':>12}"
+        f.write(header + "\n")
+        for i in range(n):
+            t = h * i
+            u_n1 = u_n + h * v_n
+            v_n1 = v_n + h / m * (-c * v_n - k * u_n - alpha * u_n**3)
+            f.write(f"{i:3d} {t:8.4f} {u_n:12.6f} {v_n:12.6f} {u_n1:12.6f} {v_n1:12.6f}\n")
+            u_n = u_n1
+            v_n = v_n1
+            ts.append(t + h)
+            us.append(u_n)
+    return np.array(ts), np.array(us)
+\end{verbatim}
 
 \subsection{Corridas numéricas}
-% Aquí pueden ir gráficos adicionales, tablas o referencias a datos.
+A continuación se muestran ejemplos de salidas numéricas relevantes para distintos casos y métodos:
+
+\subsubsection*{Euler Explícito, caso 1, $h=0.05$, $t_{{final}}=10$}
+\begin{verbatim}
+n        t          u^n          v^n      u^(n+1)      v^(n+1)           y(t)        error
+  0   0.0000     0.010000     1.000000     0.060000     0.700000       0.010000 0.000000e+00
+  1   0.0500     0.060000     0.700000     0.095000     0.225000       0.051293 8.707141e-03
+  2   0.1000     0.095000     0.225000     0.106250    -0.306250       0.072340 2.266000e-02
+  3   0.1500     0.106250    -0.306250     0.090937    -0.760938       0.073060 3.318977e-02
+  4   0.2000     0.090937    -0.760938     0.052891    -1.025391       0.057794 3.314367e-02
+  5   0.2500     0.052891    -1.025391     0.001621    -1.033496       0.033384 1.950638e-02
+  6   0.3000     0.001621    -1.033496    -0.050054    -0.783228       0.007142 -5.520789e-03
+  7   0.3500    -0.050054    -0.783228    -0.089215    -0.337152      -0.014843 -3.521085e-02
+  8   0.4000    -0.089215    -0.337152    -0.106073     0.193211      -0.028749 -6.046595e-02
+  9   0.4500    -0.106073     0.193211    -0.096412     0.675272      -0.033351 -7.272138e-02
+\end{verbatim}
+
+\subsubsection*{Euler Explícito, caso 3, $h=0.05$, $t_{{final}}=10$}
+\begin{verbatim}
+n        t          u^n          v^n      u^(n+1)      v^(n+1)           y(t)        error
+  0   0.0000     0.010000     1.000000     0.060000     0.949975       0.010000 -8.673617e-18
+  1   0.0500     0.060000     0.949975     0.107499     0.902326       0.058769 1.231215e-03
+  2   0.1000     0.107499     0.902326     0.152615     0.856941       0.105152 2.346828e-03
+  3   0.1500     0.152615     0.856941     0.195462     0.813713       0.149260 3.354957e-03
+  4   0.2000     0.195462     0.813713     0.236148     0.772538       0.191199 4.263214e-03
+  5   0.2500     0.236148     0.772538     0.274775     0.733321       0.231069 5.078733e-03
+  6   0.3000     0.274775     0.733321     0.311441     0.695968       0.268966 5.808201e-03
+  7   0.3500     0.311441     0.695968     0.346239     0.660391       0.304983 6.457879e-03
+  8   0.4000     0.346239     0.660391     0.379259     0.626506       0.339205 7.033633e-03
+  9   0.4500     0.379259     0.626506     0.410584     0.594232       0.371718 7.540953e-03
+\end{verbatim}
+
+\subsubsection*{Euler Explícito no lineal, caso 2, $h=0.05$, $t_{{final}}=10$, $\alpha=500$}
+\begin{verbatim}
+n        t          u^n          v^n      u^(n+1)      v^(n+1)
+  0   0.0000     0.010000     1.000000     0.060000     0.721625
+  1   0.0500     0.060000     0.721625     0.096081     0.450428
+  2   0.1000     0.096081     0.450428     0.118603     0.074789
+  3   0.1500     0.118603     0.074789     0.122342    -0.399925
+  4   0.2000     0.122342    -0.399925     0.102346    -0.785969
+  5   0.2500     0.102346    -0.785969     0.063047    -0.869821
+  6   0.3000     0.063047    -0.869821     0.019556    -0.712975
+  7   0.3500     0.019556    -0.712975    -0.016092    -0.524888
+  8   0.4000    -0.016092    -0.524888    -0.042337    -0.374473
+  9   0.4500    -0.042337    -0.374473    -0.061060    -0.239292
+\end{verbatim}
+
+% Ejemplo de corrida numérica para RK2
+
+\subsubsection*{RK2, caso 1, $h=0.1$, $t_{{final}}=0.5$}
+\begin{verbatim}
+n        t          u^n          v^n      u^(n+1)      v^(n+1)           y(t)        error
+  0   0.0000     0.010000     1.000000     0.080000     0.050000       0.010000 0.000000e+00
+  1   0.1000     0.080000     0.050000     0.043750    -0.593750       0.072340 7.660001e-03
+  2   0.2000     0.043750    -0.593750    -0.022656    -0.402344       0.057794 -1.404383e-02
+  3   0.3000    -0.022656    -0.402344    -0.041504     0.119629       0.007142 -2.979813e-02
+  4   0.4000    -0.041504     0.119629    -0.011780     0.326233      -0.028749 -1.275477e-02
+\end{verbatim}
 
 \end{document}
